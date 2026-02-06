@@ -89,7 +89,7 @@ private struct WhyTrendingCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Why it's trending")
+            Text("Por qué está en tendencia")
                 .font(.system(.headline, design: .rounded))
 
             ForEach(Array(notes.prefix(3)).indices, id: \.self) { index in
@@ -113,7 +113,7 @@ private struct ScoreOrb: View {
 
     var body: some View {
         HStack {
-            Text("Trending score")
+            Text("Puntuación de tendencia")
                 .font(.system(.subheadline, design: .rounded))
                 .foregroundStyle(.secondary)
             Spacer()

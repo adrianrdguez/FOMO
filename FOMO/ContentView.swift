@@ -14,12 +14,12 @@ struct ContentView: View {
         TabView {
             TodayView()
                 .tabItem {
-                    Label("Today", systemImage: "flame.fill")
+                    Label("Hoy", systemImage: "flame.fill")
                 }
 
             MapView()
                 .tabItem {
-                    Label("Map", systemImage: "map.fill")
+                    Label("Mapa", systemImage: "map.fill")
                 }
         }
         .environmentObject(viewModel)

@@ -18,105 +18,105 @@ struct PlacesService {
         return [
             Place(
                 id: "madrid-001",
-                name: "Cafe Angelica",
-                category: "Coffee",
-                shortDescription: "Sunny corner cafe with pastelitos and cold brew.",
-                latitude: 40.4269,
+                name: "Taberna Malasana",
+                category: "Tapas",
+                shortDescription: "Tapas de autor, vermut y cocina de barra.",
+                latitude: 40.4274,
                 longitude: -3.7036,
                 area: "Malasana",
-                whyTrending: "Locals are lining up for the new olive oil latte.",
+                whyTrending: "Nueva carta de pinchos y barra llena desde las 20:00.",
                 trendingNotes: [
-                    "New olive oil latte just launched",
-                    "Morning queue is back this week",
-                    "Great sunny corner seating"
+                    "Pinchos nuevos cada semana",
+                    "Vermut de grifo muy pedido",
+                    "Reserva rapida para mesas altas"
                 ],
                 trendingScore: 92,
-                appleMapsUrl: "https://maps.apple.com/?q=Cafe%20Angelica"
+                appleMapsUrl: "https://maps.apple.com/?q=Taberna%20Malasana%20Madrid"
             ),
             Place(
                 id: "madrid-002",
-                name: "Mercado Norte",
-                category: "Food Hall",
-                shortDescription: "Compact market with rotating chefs and wine taps.",
-                latitude: 40.4158,
-                longitude: -3.7074,
-                area: "Centro",
-                whyTrending: "A chef pop-up is drawing a dinner crowd all week.",
+                name: "Asador Gran Via",
+                category: "Asador",
+                shortDescription: "Carnes a la brasa y cocina castellana clasica.",
+                latitude: 40.4194,
+                longitude: -3.7059,
+                area: "Gran Via",
+                whyTrending: "Menu de chuleton con reservas agotadas.",
                 trendingNotes: [
-                    "Chef pop-up runs all week",
-                    "Wine taps got a refresh",
-                    "Live tapas station tonight"
+                    "Chuleton de vaca vieja",
+                    "Menu degustacion de brasas",
+                    "Cocina a la vista"
                 ],
-                trendingScore: 88,
-                appleMapsUrl: "https://maps.apple.com/?q=Mercado%20Norte"
+                trendingScore: 90,
+                appleMapsUrl: "https://maps.apple.com/?q=Asador%20Gran%20Via%20Madrid"
             ),
             Place(
                 id: "madrid-003",
-                name: "Rio Verde Walk",
-                category: "Outdoors",
-                shortDescription: "Riverside loop with street art and sunset views.",
-                latitude: 40.4059,
-                longitude: -3.7210,
-                area: "Arganzuela",
-                whyTrending: "Evening crowds are building for the golden hour.",
+                name: "Casa Chamberi",
+                category: "Cocina madrilena",
+                shortDescription: "Cocido, callos y guisos de temporada.",
+                latitude: 40.4340,
+                longitude: -3.7038,
+                area: "Chamberi",
+                whyTrending: "El cocido de los miercoles esta a tope.",
                 trendingNotes: [
-                    "Golden hour views are popular",
-                    "Fresh mural just dropped",
-                    "Easy river loop for walks"
+                    "Cocido en dos vuelcos",
+                    "Callos con un toque picante",
+                    "Raciones generosas"
                 ],
-                trendingScore: 84,
-                appleMapsUrl: "https://maps.apple.com/?q=Rio%20Verde%20Walk"
+                trendingScore: 88,
+                appleMapsUrl: "https://maps.apple.com/?q=Casa%20Chamberi%20Madrid"
             ),
             Place(
                 id: "madrid-004",
-                name: "Luna Vinyl Bar",
-                category: "Nightlife",
-                shortDescription: "Listening bar with curated sets and small plates.",
-                latitude: 40.4212,
-                longitude: -3.6992,
-                area: "Chueca",
-                whyTrending: "A guest DJ series is boosting late-night traffic.",
+                name: "Marisqueria La Latina",
+                category: "Marisqueria",
+                shortDescription: "Marisco fresco y arroces para compartir.",
+                latitude: 40.4110,
+                longitude: -3.7085,
+                area: "La Latina",
+                whyTrending: "Jornadas de arroz caldoso y marisco del dia.",
                 trendingNotes: [
-                    "Guest DJ series this weekend",
-                    "Limited seats at the bar",
-                    "Small-plate menu is new"
+                    "Arroz caldoso muy solicitado",
+                    "Marisco traido cada manana",
+                    "Barra con ostras"
                 ],
-                trendingScore: 90,
-                appleMapsUrl: "https://maps.apple.com/?q=Luna%20Vinyl%20Bar"
+                trendingScore: 85,
+                appleMapsUrl: "https://maps.apple.com/?q=Marisqueria%20La%20Latina%20Madrid"
             ),
             Place(
                 id: "madrid-005",
-                name: "Museo Patio",
-                category: "Culture",
-                shortDescription: "Small gallery with a quiet courtyard cafe.",
-                latitude: 40.4134,
-                longitude: -3.7005,
-                area: "Las Letras",
-                whyTrending: "A new street photography exhibit just opened.",
+                name: "Bodega Salamanca",
+                category: "Taberna",
+                shortDescription: "Vinos por copas, conservas premium y raciones.",
+                latitude: 40.4260,
+                longitude: -3.6830,
+                area: "Salamanca",
+                whyTrending: "Cata de vinos y nuevas raciones cada semana.",
                 trendingNotes: [
-                    "New street photo exhibit",
-                    "Courtyard cafe reopened",
-                    "Quiet mid-day vibe"
+                    "Carta de vinos por copas amplia",
+                    "Anchoas y conservas top",
+                    "Mesas de barra con mucho ambiente"
                 ],
-                trendingScore: 81,
-                appleMapsUrl: "https://maps.apple.com/?q=Museo%20Patio"
+                trendingScore: 83,
+                appleMapsUrl: "https://maps.apple.com/?q=Bodega%20Salamanca%20Madrid"
             ),
             Place(
                 id: "madrid-006",
-                name: "Azotea Aurora",
-                category: "Rooftop",
-                shortDescription: "Open-air terrace with skyline views and spritz.",
-                latitude: 40.4183,
-                longitude: -3.7079,
-                area: "Gran Via",
-                whyTrending: "Golden-hour tables are booking out fast.",
+                name: "Meson Lavapies",
+                category: "Cocina casera",
+                shortDescription: "Platos de cuchara y menu del dia.",
+                latitude: 40.4098,
+                longitude: -3.7045,
+                area: "Lavapies",
+                whyTrending: "Menu del dia con cola a mediodia.",
                 trendingNotes: [
-                    "Sunset tables are booking fast",
-                    "New spritz menu launched",
-                    "Skyline view at dusk"
+                    "Platos de cuchara caseros",
+                    "Postres tradicionales",
+                    "Precio redondo"
                 ],
-                trendingScore: 95,
-                appleMapsUrl: "https://maps.apple.com/?q=Azotea%20Aurora"
+                trendingScore: 80,
+                appleMapsUrl: "https://maps.apple.com/?q=Meson%20Lavapies%20Madrid"
             )
         ]
     }

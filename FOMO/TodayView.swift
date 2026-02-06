@@ -80,7 +80,7 @@ struct TodayView: View {
     private var loadingView: some View {
         VStack(spacing: 12) {
             ProgressView()
-            Text("Finding what is trending near you")
+            Text("Buscando lo que está en tendencia cerca de ti")
                 .font(.system(.subheadline, design: .rounded))
                 .foregroundStyle(.secondary)
         }
@@ -92,7 +92,7 @@ struct TodayView: View {
             Text(message)
                 .multilineTextAlignment(.center)
                 .font(.system(.headline, design: .rounded))
-            Button("Try Again") {
+            Button("Reintentar") {
                 Task {
                     await viewModel.loadPlaces()
                 }
@@ -135,7 +135,7 @@ private struct HeroCard: View {
                     )
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Top Trending")
+                    Text("Lo más popular")
                         .font(.system(.subheadline, design: .rounded))
                         .foregroundStyle(.secondary)
 
@@ -314,18 +314,18 @@ private struct ScoreBadge: View {
 extension Place {
     var categoryColor: Color {
         switch category.lowercased() {
-        case let value where value.contains("coffee"):
+        case let value where value.contains("tapa"):
             return Color.orange
-        case let value where value.contains("food"):
+        case let value where value.contains("asador"):
+            return Color.red
+        case let value where value.contains("madril"):
             return Color.yellow
-        case let value where value.contains("night"):
+        case let value where value.contains("maris"):
+            return Color.blue
+        case let value where value.contains("taberna"):
             return Color.pink
-        case let value where value.contains("culture"):
-            return Color.indigo
-        case let value where value.contains("outdoors"):
+        case let value where value.contains("casera"):
             return Color.green
-        case let value where value.contains("rooftop"):
-            return Color.teal
         default:
             return Color.blue
         }
@@ -333,18 +333,18 @@ extension Place {
 
     var symbolName: String {
         switch category.lowercased() {
-        case let value where value.contains("coffee"):
-            return "cup.and.saucer.fill"
-        case let value where value.contains("food"):
+        case let value where value.contains("tapa"):
             return "fork.knife"
-        case let value where value.contains("night"):
-            return "music.note"
-        case let value where value.contains("culture"):
-            return "theatermasks.fill"
-        case let value where value.contains("outdoors"):
+        case let value where value.contains("asador"):
+            return "fork.knife"
+        case let value where value.contains("madril"):
+            return "flame.fill"
+        case let value where value.contains("maris"):
+            return "fish.fill"
+        case let value where value.contains("taberna"):
+            return "wineglass.fill"
+        case let value where value.contains("casera"):
             return "leaf.fill"
-        case let value where value.contains("rooftop"):
-            return "sparkles"
         default:
             return "mappin.circle.fill"
         }

@@ -26,7 +26,7 @@ final class PlacesViewModel: ObservableObject {
         do {
             places = try await service.fetchPlaces()
         } catch {
-            errorMessage = "Unable to load places."
+            errorMessage = "No se pudieron cargar los lugares."
         }
         isLoading = false
     }
