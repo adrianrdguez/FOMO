@@ -8,14 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel = PlacesViewModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            TodayView()
+                .tabItem {
+                    Label("Today 🔥", systemImage: "flame.fill")
+                }
+
+            MapView()
+                .tabItem {
+                    Label("Map", systemImage: "map")
+                }
         }
-        .padding()
+        .environmentObject(viewModel)
     }
 }
 
