@@ -10,71 +10,343 @@ import SwiftUI
 struct TodayView: View {
     @EnvironmentObject private var viewModel: PlacesViewModel
     @State private var selectedPlace: Place?
+    @State private var animateIn = false
 
-    var body: some View {
-        content
-            .task {
-                await viewModel.loadPlaces()
-            }
-            .sheet(item: $selectedPlace) { place in
-                PlaceDetailView(place: place)
-            }
+    private var heroPlace: Place? {
+        viewModel.places.max(by: { $0.trendingScore < $1.trendingScore })
     }
 
-    @ViewBuilder
-    private var content: some View {
-        if viewModel.isLoading {
-            ProgressView("Loading places...")
-        } else if let errorMessage = viewModel.errorMessage {
-            VStack(spacing: 12) {
-                Text(errorMessage)
-                    .multilineTextAlignment(.center)
-                Button("Try Again") {
-                    Task {
-                        await viewModel.loadPlaces()
+    private var gridPlaces: [Place] {
+        guard let heroId = heroPlace?.id else { return viewModel.places }
+        return viewModel.places.filter { $0.id != heroId }
+    }
+
+    var body: some View {
+        Group {
+            if viewModel.isLoading {
+                loadingView
+            } else if let errorMessage = viewModel.errorMessage {
+                errorView(message: errorMessage)
+            } else {
+                feedView
+            }
+        }
+        .background(screenBackground.ignoresSafeArea())
+        .task {
+            await viewModel.loadPlaces()
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                animateIn = true
+            }
+        }
+        .sheet(item: $selectedPlace) { place in
+            PlaceDetailView(place: place)
+        }
+    }
+
+    private var feedView: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 24) {
+                if let hero = heroPlace {
+                    HeroCard(place: hero) {
+                        selectedPlace = hero
+                    }
+                }
+
+                LazyVGrid(columns: gridColumns, spacing: 16) {
+                    if let primary = gridPlaces.first {
+                        BentoCard(place: primary, isPrimary: true) {
+                            selectedPlace = primary
+                        }
+                        .gridCellColumns(2)
+                    }
+
+                    ForEach(gridPlaces.dropFirst()) { place in
+                        BentoCard(place: place, isPrimary: false) {
+                            selectedPlace = place
+                        }
                     }
                 }
             }
-            .padding()
-        } else {
-            List(viewModel.places) { place in
-                PlaceRow(place: place)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        selectedPlace = place
-                    }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 120)
+            .opacity(animateIn ? 1 : 0)
+            .scaleEffect(animateIn ? 1 : 0.98)
+        }
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("Finding what is trending near you")
+                .font(.system(.subheadline, design: .rounded))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func errorView(message: String) -> some View {
+        VStack(spacing: 14) {
+            Text(message)
+                .multilineTextAlignment(.center)
+                .font(.system(.headline, design: .rounded))
+            Button("Try Again") {
+                Task {
+                    await viewModel.loadPlaces()
+                }
             }
-            .listStyle(.plain)
+            .buttonStyle(.borderedProminent)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var gridColumns: [GridItem] {
+        [
+            GridItem(.flexible(), spacing: 16),
+            GridItem(.flexible(), spacing: 16)
+        ]
+    }
+
+    private var screenBackground: some View {
+        LinearGradient(
+            colors: [Color(.systemBackground), Color(.secondarySystemBackground)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+}
+
+private struct HeroCard: View {
+    let place: Place
+    let onTap: () -> Void
+    @State private var appear = false
+
+    var body: some View {
+        Button(action: onTap) {
+            ZStack(alignment: .topTrailing) {
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .fill(heroGradient)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
+                            .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                    )
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Top Trending")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(.secondary)
+
+                    Text(place.name)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(.primary)
+
+                    Text(place.whyTrending)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+
+                    HStack(spacing: 8) {
+                        CategoryPill(category: place.category)
+                        Text(place.area)
+                            .font(.system(.subheadline, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                ScoreBadge(score: place.trendingScore, size: 64)
+                    .padding(20)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 232)
+            .shadow(color: heroShadow, radius: 24, y: 16)
+        }
+        .buttonStyle(.plain)
+        .scaleEffect(appear ? 1 : 0.98)
+        .opacity(appear ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                appear = true
+            }
+        }
+    }
+
+    private var heroGradient: LinearGradient {
+        LinearGradient(
+            colors: [place.categoryColor.opacity(0.35), place.categoryColor.opacity(0.15)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var heroShadow: Color {
+        place.categoryColor.opacity(0.25)
+    }
+}
+
+private struct BentoCard: View {
+    let place: Place
+    let isPrimary: Bool
+    let onTap: () -> Void
+    @State private var appear = false
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    CategoryIcon(place: place)
+                    Spacer()
+                }
+
+                Text(place.name)
+                    .font(.system(isPrimary ? .title3 : .headline, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+
+                Text(place.shortDescription)
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, minHeight: 150, maxHeight: 150, alignment: .topLeading)
+            .background(cardBackground)
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .shadow(color: place.categoryColor.opacity(0.18), radius: 16, y: 10)
+        }
+        .buttonStyle(.plain)
+        .scaleEffect(appear ? 1 : 0.98)
+        .opacity(appear ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                appear = true
+            }
+        }
+    }
+
+    private var cardBackground: some View {
+        LinearGradient(
+            colors: [place.categoryColor.opacity(0.22), place.categoryColor.opacity(0.1)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+private struct CategoryPill: View {
+    let category: String
+
+    var body: some View {
+        Text(category)
+            .font(.system(.caption, design: .rounded))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(.ultraThinMaterial, in: Capsule())
+    }
+}
+
+private struct CategoryIcon: View {
+    let place: Place
+
+    var body: some View {
+        Image(systemName: place.symbolName)
+            .font(.system(.subheadline, design: .rounded))
+            .foregroundStyle(place.categoryColor)
+            .frame(width: 32, height: 32)
+            .background(
+                Circle()
+                    .fill(place.categoryColor.opacity(0.18))
+            )
+    }
+}
+
+private struct ScoreBadge: View {
+    let score: Int
+    let size: CGFloat
+    @State private var appear = false
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    Circle()
+                        .stroke(scoreColor.opacity(0.5), lineWidth: 1)
+                )
+
+            Text("\(score)")
+                .font(.system(size: size * 0.36, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+        }
+        .frame(width: size, height: size)
+        .shadow(color: scoreColor.opacity(0.35), radius: 14, y: 8)
+        .scaleEffect(appear ? 1 : 0.9)
+        .opacity(appear ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                appear = true
+            }
+        }
+    }
+
+    private var scoreColor: Color {
+        switch score {
+        case 90...:
+            return Color.orange
+        case 80...:
+            return Color.mint
+        case 70...:
+            return Color.blue
+        default:
+            return Color.gray
         }
     }
 }
 
-private struct PlaceRow: View {
-    let place: Place
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(place.name)
-                    .font(.headline)
-                Spacer()
-                Text("\(place.trendingScore)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-
-            Text("\(place.category) · \(place.area)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Text(place.shortDescription)
-                .font(.body)
-                .foregroundStyle(.primary)
-
-            Text(place.whyTrending)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+extension Place {
+    var categoryColor: Color {
+        switch category.lowercased() {
+        case let value where value.contains("coffee"):
+            return Color.orange
+        case let value where value.contains("food"):
+            return Color.yellow
+        case let value where value.contains("night"):
+            return Color.pink
+        case let value where value.contains("culture"):
+            return Color.indigo
+        case let value where value.contains("outdoors"):
+            return Color.green
+        case let value where value.contains("rooftop"):
+            return Color.teal
+        default:
+            return Color.blue
         }
-        .padding(.vertical, 6)
+    }
+
+    var symbolName: String {
+        switch category.lowercased() {
+        case let value where value.contains("coffee"):
+            return "cup.and.saucer.fill"
+        case let value where value.contains("food"):
+            return "fork.knife"
+        case let value where value.contains("night"):
+            return "music.note"
+        case let value where value.contains("culture"):
+            return "theatermasks.fill"
+        case let value where value.contains("outdoors"):
+            return "leaf.fill"
+        case let value where value.contains("rooftop"):
+            return "sparkles"
+        default:
+            return "mappin.circle.fill"
+        }
     }
 }
