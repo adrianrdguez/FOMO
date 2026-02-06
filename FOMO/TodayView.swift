@@ -9,15 +9,16 @@ import SwiftUI
 
 struct TodayView: View {
     @EnvironmentObject private var viewModel: PlacesViewModel
+    @State private var selectedPlace: Place?
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Today 🔥")
-        }
-        .task {
-            await viewModel.loadPlaces()
-        }
+        content
+            .task {
+                await viewModel.loadPlaces()
+            }
+            .sheet(item: $selectedPlace) { place in
+                PlaceDetailView(place: place)
+            }
     }
 
     @ViewBuilder
@@ -38,6 +39,10 @@ struct TodayView: View {
         } else {
             List(viewModel.places) { place in
                 PlaceRow(place: place)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedPlace = place
+                    }
             }
             .listStyle(.plain)
         }

@@ -25,6 +25,11 @@ struct PlacesService {
                 longitude: -3.7036,
                 area: "Malasana",
                 whyTrending: "Locals are lining up for the new olive oil latte.",
+                trendingNotes: [
+                    "New olive oil latte just launched",
+                    "Morning queue is back this week",
+                    "Great sunny corner seating"
+                ],
                 trendingScore: 92,
                 appleMapsUrl: "https://maps.apple.com/?q=Cafe%20Angelica"
             ),
@@ -37,6 +42,11 @@ struct PlacesService {
                 longitude: -3.7074,
                 area: "Centro",
                 whyTrending: "A chef pop-up is drawing a dinner crowd all week.",
+                trendingNotes: [
+                    "Chef pop-up runs all week",
+                    "Wine taps got a refresh",
+                    "Live tapas station tonight"
+                ],
                 trendingScore: 88,
                 appleMapsUrl: "https://maps.apple.com/?q=Mercado%20Norte"
             ),
@@ -49,6 +59,11 @@ struct PlacesService {
                 longitude: -3.7210,
                 area: "Arganzuela",
                 whyTrending: "Evening crowds are building for the golden hour.",
+                trendingNotes: [
+                    "Golden hour views are popular",
+                    "Fresh mural just dropped",
+                    "Easy river loop for walks"
+                ],
                 trendingScore: 84,
                 appleMapsUrl: "https://maps.apple.com/?q=Rio%20Verde%20Walk"
             ),
@@ -61,6 +76,11 @@ struct PlacesService {
                 longitude: -3.6992,
                 area: "Chueca",
                 whyTrending: "A guest DJ series is boosting late-night traffic.",
+                trendingNotes: [
+                    "Guest DJ series this weekend",
+                    "Limited seats at the bar",
+                    "Small-plate menu is new"
+                ],
                 trendingScore: 90,
                 appleMapsUrl: "https://maps.apple.com/?q=Luna%20Vinyl%20Bar"
             ),
@@ -73,6 +93,11 @@ struct PlacesService {
                 longitude: -3.7005,
                 area: "Las Letras",
                 whyTrending: "A new street photography exhibit just opened.",
+                trendingNotes: [
+                    "New street photo exhibit",
+                    "Courtyard cafe reopened",
+                    "Quiet mid-day vibe"
+                ],
                 trendingScore: 81,
                 appleMapsUrl: "https://maps.apple.com/?q=Museo%20Patio"
             ),
@@ -85,6 +110,11 @@ struct PlacesService {
                 longitude: -3.7079,
                 area: "Gran Via",
                 whyTrending: "Golden-hour tables are booking out fast.",
+                trendingNotes: [
+                    "Sunset tables are booking fast",
+                    "New spritz menu launched",
+                    "Skyline view at dusk"
+                ],
                 trendingScore: 95,
                 appleMapsUrl: "https://maps.apple.com/?q=Azotea%20Aurora"
             )

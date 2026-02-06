@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Place: Identifiable, Codable {
+struct Place: Identifiable, Codable, Hashable {
     let id: String
     let name: String
     let category: String
@@ -16,6 +16,7 @@ struct Place: Identifiable, Codable {
     let longitude: Double
     let area: String
     let whyTrending: String
+    let trendingNotes: [String]
     let trendingScore: Int
     let appleMapsUrl: String
 }
