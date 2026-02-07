@@ -9,7 +9,7 @@ import MapKit
 import SwiftUI
 
 struct MapView: View {
-    @EnvironmentObject private var viewModel: PlacesViewModel
+    @State private var viewModel = PlacesViewModel()
     @State private var selectedPlace: Place?
     @State private var position = MapCameraPosition.region(
         MKCoordinateRegion(

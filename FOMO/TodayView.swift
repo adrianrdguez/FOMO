@@ -7,8 +7,44 @@
 
 import SwiftUI
 
+// MARK: - Layout Constants
+
+private enum LayoutConstants {
+    static let animationDuration: Double = 0.4
+    static let animationDamping: Double = 0.85
+    static let initialScale: CGFloat = 0.98
+    
+    static let sectionSpacing: CGFloat = 24
+    static let gridSpacing: CGFloat = 16
+    static let gridItemSpacing: CGFloat = 16
+    static let horizontalPadding: CGFloat = 20
+    static let topPadding: CGFloat = 16
+    static let bottomPadding: CGFloat = 120
+    
+    static let heroCardHeight: CGFloat = 232
+    static let heroCardCornerRadius: CGFloat = 28
+    static let heroCardShadowRadius: CGFloat = 24
+    static let heroCardShadowY: CGFloat = 16
+    static let heroCardPadding: CGFloat = 24
+    static let heroCardScorePadding: CGFloat = 20
+    static let heroCardScoreSize: CGFloat = 64
+    
+    static let bentoCardCornerRadius: CGFloat = 22
+    static let bentoCardMinHeight: CGFloat = 150
+    static let bentoCardPadding: CGFloat = 18
+    static let bentoCardShadowRadius: CGFloat = 16
+    static let bentoCardShadowY: CGFloat = 10
+    static let bentoCardStrokeOpacity: CGFloat = 0.2
+    
+    static let scoreBadgeShadowRadius: CGFloat = 14
+    static let scoreBadgeShadowY: CGFloat = 8
+    static let scoreBadgeInitialScale: CGFloat = 0.9
+}
+
+// MARK: - Main View
+
 struct TodayView: View {
-    @EnvironmentObject private var viewModel: PlacesViewModel
+    @State private var viewModel = PlacesViewModel()
     @State private var selectedPlace: Place?
     @State private var animateIn = false
 
@@ -36,7 +72,7 @@ struct TodayView: View {
             await viewModel.loadPlaces()
         }
         .onAppear {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            withAnimation(.spring(response: LayoutConstants.animationDuration, dampingFraction: LayoutConstants.animationDamping)) {
                 animateIn = true
             }
         }
@@ -46,15 +82,15 @@ struct TodayView: View {
     }
 
     private var feedView: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 24) {
+        ScrollView {
+            VStack(spacing: LayoutConstants.sectionSpacing) {
                 if let hero = heroPlace {
                     HeroCard(place: hero) {
                         selectedPlace = hero
                     }
                 }
 
-                LazyVGrid(columns: gridColumns, spacing: 16) {
+                LazyVGrid(columns: gridColumns, spacing: LayoutConstants.gridSpacing) {
                     if let primary = gridPlaces.first {
                         BentoCard(place: primary, isPrimary: true) {
                             selectedPlace = primary
@@ -69,12 +105,13 @@ struct TodayView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-            .padding(.bottom, 120)
+            .padding(.horizontal, LayoutConstants.horizontalPadding)
+            .padding(.top, LayoutConstants.topPadding)
+            .padding(.bottom, LayoutConstants.bottomPadding)
             .opacity(animateIn ? 1 : 0)
-            .scaleEffect(animateIn ? 1 : 0.98)
+            .scaleEffect(animateIn ? 1 : LayoutConstants.initialScale)
         }
+        .scrollIndicators(.hidden)
     }
 
     private var loadingView: some View {
@@ -105,8 +142,8 @@ struct TodayView: View {
 
     private var gridColumns: [GridItem] {
         [
-            GridItem(.flexible(), spacing: 16),
-            GridItem(.flexible(), spacing: 16)
+            GridItem(.flexible(), spacing: LayoutConstants.gridItemSpacing),
+            GridItem(.flexible(), spacing: LayoutConstants.gridItemSpacing)
         ]
     }
 
@@ -119,18 +156,19 @@ struct TodayView: View {
     }
 }
 
+// MARK: - Hero Card
+
 private struct HeroCard: View {
     let place: Place
     let onTap: () -> Void
-    @State private var appear = false
 
     var body: some View {
         Button(action: onTap) {
             ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                RoundedRectangle(cornerRadius: LayoutConstants.heroCardCornerRadius, style: .continuous)
                     .fill(heroGradient)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        RoundedRectangle(cornerRadius: LayoutConstants.heroCardCornerRadius, style: .continuous)
                             .stroke(Color.white.opacity(0.25), lineWidth: 1)
                     )
 
@@ -155,24 +193,19 @@ private struct HeroCard: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .padding(24)
+                .padding(LayoutConstants.heroCardPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                ScoreBadge(score: place.trendingScore, size: 64)
-                    .padding(20)
+                ScoreBadge(score: place.trendingScore, size: LayoutConstants.heroCardScoreSize)
+                    .padding(LayoutConstants.heroCardScorePadding)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 232)
-            .shadow(color: heroShadow, radius: 24, y: 16)
+            .frame(height: LayoutConstants.heroCardHeight)
+            .shadow(color: heroShadow, radius: LayoutConstants.heroCardShadowRadius, y: LayoutConstants.heroCardShadowY)
         }
         .buttonStyle(.plain)
-        .scaleEffect(appear ? 1 : 0.98)
-        .opacity(appear ? 1 : 0)
-        .onAppear {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                appear = true
-            }
-        }
+        .accessibilityLabel("\(place.name), \(place.category), puntuación de tendencia \(place.trendingScore)")
+        .accessibilityHint("Toca para ver detalles")
     }
 
     private var heroGradient: LinearGradient {
@@ -188,11 +221,12 @@ private struct HeroCard: View {
     }
 }
 
+// MARK: - Bento Card
+
 private struct BentoCard: View {
     let place: Place
     let isPrimary: Bool
     let onTap: () -> Void
-    @State private var appear = false
 
     var body: some View {
         Button(action: onTap) {
@@ -212,24 +246,19 @@ private struct BentoCard: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
             }
-            .padding(18)
-            .frame(maxWidth: .infinity, minHeight: 150, maxHeight: 150, alignment: .topLeading)
+            .padding(LayoutConstants.bentoCardPadding)
+            .frame(maxWidth: .infinity, minHeight: LayoutConstants.bentoCardMinHeight, maxHeight: LayoutConstants.bentoCardMinHeight, alignment: .topLeading)
             .background(cardBackground)
             .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                RoundedRectangle(cornerRadius: LayoutConstants.bentoCardCornerRadius, style: .continuous)
+                    .stroke(Color.white.opacity(LayoutConstants.bentoCardStrokeOpacity), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-            .shadow(color: place.categoryColor.opacity(0.18), radius: 16, y: 10)
+            .clipShape(RoundedRectangle(cornerRadius: LayoutConstants.bentoCardCornerRadius, style: .continuous))
+            .shadow(color: place.categoryColor.opacity(0.18), radius: LayoutConstants.bentoCardShadowRadius, y: LayoutConstants.bentoCardShadowY)
         }
         .buttonStyle(.plain)
-        .scaleEffect(appear ? 1 : 0.98)
-        .opacity(appear ? 1 : 0)
-        .onAppear {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                appear = true
-            }
-        }
+        .accessibilityLabel("\(place.name), \(place.category)")
+        .accessibilityHint("Toca para ver detalles")
     }
 
     private var cardBackground: some View {
@@ -240,6 +269,8 @@ private struct BentoCard: View {
         )
     }
 }
+
+// MARK: - Supporting Views
 
 private struct CategoryPill: View {
     let category: String
@@ -271,7 +302,6 @@ private struct CategoryIcon: View {
 private struct ScoreBadge: View {
     let score: Int
     let size: CGFloat
-    @State private var appear = false
 
     var body: some View {
         ZStack {
@@ -287,14 +317,7 @@ private struct ScoreBadge: View {
                 .foregroundStyle(.primary)
         }
         .frame(width: size, height: size)
-        .shadow(color: scoreColor.opacity(0.35), radius: 14, y: 8)
-        .scaleEffect(appear ? 1 : 0.9)
-        .opacity(appear ? 1 : 0)
-        .onAppear {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                appear = true
-            }
-        }
+        .shadow(color: scoreColor.opacity(0.35), radius: LayoutConstants.scoreBadgeShadowRadius, y: LayoutConstants.scoreBadgeShadowY)
     }
 
     private var scoreColor: Color {
@@ -310,6 +333,8 @@ private struct ScoreBadge: View {
         }
     }
 }
+
+// MARK: - Place Extensions
 
 extension Place {
     var categoryColor: Color {

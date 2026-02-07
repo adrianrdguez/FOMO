@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = PlacesViewModel()
-
     var body: some View {
         TabView {
             TodayView()
@@ -22,6 +20,5 @@ struct ContentView: View {
                     Label("Mapa", systemImage: "map.fill")
                 }
         }
-        .environmentObject(viewModel)
     }
 }

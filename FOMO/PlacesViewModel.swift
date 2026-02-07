@@ -5,14 +5,14 @@
 //  Created by Ucademy on 6/2/26.
 //
 
-import Combine
 import Foundation
 
 @MainActor
-final class PlacesViewModel: ObservableObject {
-    @Published private(set) var places: [Place] = []
-    @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage: String?
+@Observable
+final class PlacesViewModel {
+    private(set) var places: [Place] = []
+    private(set) var isLoading = false
+    private(set) var errorMessage: String?
 
     private let service: PlacesService
 
