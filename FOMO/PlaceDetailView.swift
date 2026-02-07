@@ -81,15 +81,7 @@ private struct PhotoHeader: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             // Photo
-            if let imageURL = place.imageURL {
-                CachedAsyncImage(url: imageURL)
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 320)
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-            } else {
-                gradientPlaceholder
-            }
+            gradientPlaceholder
             
             // Gradient overlay
             LinearGradient(
@@ -103,6 +95,7 @@ private struct PhotoHeader: View {
             )
             .frame(height: 160)
         }
+        .frame(maxWidth: .infinity)
         .frame(height: 320)
     }
     
@@ -115,6 +108,7 @@ private struct PhotoHeader: View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -411,49 +405,6 @@ private struct CloseButton: View {
                 .background(Circle().fill(.black.opacity(0.3)))
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Cached Async Image
-
-private struct CachedAsyncImage: View {
-    let url: String
-    @State private var image: UIImage?
-    
-    var body: some View {
-        Group {
-            if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-            } else {
-                placeholder
-                    .task {
-                        await loadImage()
-                    }
-            }
-        }
-    }
-    
-    private var placeholder: some View {
-        ZStack {
-            Color.gray.opacity(0.2)
-            ProgressView()
-        }
-    }
-    
-    private func loadImage() async {
-        guard let url = URL(string: url) else { return }
-        
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            if let uiImage = UIImage(data: data) {
-                await MainActor.run {
-                    self.image = uiImage
-                }
-            }
-        } catch {
-            print("Failed to load image: \(error)")
-        }
     }
 }
 

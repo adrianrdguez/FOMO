@@ -184,13 +184,7 @@ private struct HeroSection: View {
         Button(action: onTap) {
             ZStack(alignment: .bottomLeading) {
                 // Photo Background
-                if let imageURL = place.imageURL {
-                    CachedAsyncImage(url: imageURL)
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: LayoutConstants.heroHeight)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                }
+                placeholderBackground
                 
                 // Gradient Overlay
                 LinearGradient(
@@ -277,6 +271,7 @@ private struct HeroSection: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity)
             .frame(height: LayoutConstants.heroHeight)
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: LayoutConstants.heroCornerRadius, style: .continuous))
@@ -293,6 +288,15 @@ private struct HeroSection: View {
         .buttonStyle(.plain)
         .accessibilityLabel("\(place.name), \(place.category), puntuacion \(place.trendingScore)")
         .accessibilityHint("Toca para ver detalles")
+    }
+    
+    private var placeholderBackground: some View {
+        LinearGradient(
+            colors: [place.categoryColor.opacity(0.35), place.categoryColor.opacity(0.15)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -443,15 +447,7 @@ private struct EditorialCard: View {
         Button(action: onTap) {
             ZStack(alignment: .bottomLeading) {
                 // Photo Background
-                if let imageURL = place.imageURL {
-                    CachedAsyncImage(url: imageURL)
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: cardHeight)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                } else {
-                    placeholderBackground
-                }
+                placeholderBackground
                 
                 // Gradient Overlay
                 LinearGradient(
@@ -550,6 +546,7 @@ private struct EditorialCard: View {
                 }
                 .padding(cardType == .compact ? 14 : 20)
             }
+            .frame(maxWidth: .infinity)
             .frame(height: cardHeight)
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: LayoutConstants.cardCornerRadius, style: .continuous))
@@ -595,6 +592,7 @@ private struct EditorialCard: View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -676,49 +674,6 @@ private struct GlassShimmer: View {
                     isAnimating = true
                 }
             }
-    }
-}
-
-// MARK: - Async Image Cache
-
-private struct CachedAsyncImage: View {
-    let url: String
-    @State private var image: UIImage?
-    
-    var body: some View {
-        Group {
-            if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-            } else {
-                placeholder
-                    .task {
-                        await loadImage()
-                    }
-            }
-        }
-    }
-    
-    private var placeholder: some View {
-        ZStack {
-            Color.gray.opacity(0.2)
-            ProgressView()
-        }
-    }
-    
-    private func loadImage() async {
-        guard let url = URL(string: url) else { return }
-        
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            if let uiImage = UIImage(data: data) {
-                await MainActor.run {
-                    self.image = uiImage
-                }
-            }
-        } catch {
-            print("Failed to load image: \(error)")
-        }
     }
 }
 
